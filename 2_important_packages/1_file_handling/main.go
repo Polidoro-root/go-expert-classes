@@ -7,6 +7,7 @@ import (
 )
 
 func writeFile() {
+
 	f, err := os.Create("file.txt")
 
 	if err != nil {
