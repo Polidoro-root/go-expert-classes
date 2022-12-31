@@ -7,6 +7,8 @@ import (
 	"github.com/Polidoro-root/go-expert/7_apis/internal/entity"
 	"github.com/Polidoro-root/go-expert/7_apis/internal/infra/database"
 	"github.com/Polidoro-root/go-expert/7_apis/internal/infra/webserver/handlers"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -29,7 +31,16 @@ func main() {
 	productDB := database.NewProduct(db)
 	productHandler := handlers.NewProductHandler(productDB)
 
-	http.HandleFunc("/products", productHandler.CreateProduct)
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
 
-	http.ListenAndServe(":8080", nil)
+	r.Route("/products", func(r chi.Router) {
+		r.Get("/{id}", productHandler.GetProduct)
+		r.Get("/", productHandler.GetProducts)
+		r.Post("/", productHandler.CreateProduct)
+		r.Put("/{id}", productHandler.UpdateProduct)
+		r.Delete("/{id}", productHandler.DeleteProduct)
+	})
+
+	http.ListenAndServe(":8080", r)
 }
