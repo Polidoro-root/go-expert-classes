@@ -13,6 +13,7 @@ GET http://localhost:8080/products/d50119b9-b4c9-4dc3-bac8-ba67bde8c774 HTTP/1.1
 ###
 
 GET http://localhost:8080/products HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1OTdlYjEwMC0zNTBlLTRjOGUtODk4Mi0wNWM1MDJkMzg1ZTMifQ.rWEC91EmPLv6OgG-lh2fOVMKNMgnLKM0uCpUEGNTQV4
 
 
 ###
