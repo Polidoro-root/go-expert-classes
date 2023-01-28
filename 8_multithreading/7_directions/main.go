@@ -5,7 +5,7 @@ func publish(data string, ch chan<- string) {
 }
 
 func read(ch <-chan string) {
-	println(<-chan)
+	println(<-ch)
 }
 
 func main() {
