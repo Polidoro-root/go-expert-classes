@@ -2,7 +2,10 @@ module github.com/Polidoro-root/go-expert-classes/9_events
 
 go 1.20
 
-require github.com/stretchr/testify v1.8.1
+require (
+	github.com/rabbitmq/amqp091-go v1.7.0
+	github.com/stretchr/testify v1.8.1
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
