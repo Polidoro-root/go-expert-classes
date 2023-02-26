@@ -8,4 +8,5 @@ import "github.com/Polidoro-root/go-expert-classes/11_graphql/internal/database"
 
 type Resolver struct {
 	CategoryDB *database.Category
+	CourseDB   *database.Course
 }
