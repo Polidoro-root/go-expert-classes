@@ -52,10 +52,10 @@ autobind:
 models:
   Category:
     model:
-      - github.com/go-expert-classes/11_graphql/graph/model.Category
+      - github.com/Polidoro-root/go-expert-classes/11_graphql/graph/model.Category
   Course:
     model:
-      - github.com/go-expert-classes/11_graphql/graph/model.Course
+      - github.com/Polidoro-root/go-expert-classes/11_graphql/graph/model.Course
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID
