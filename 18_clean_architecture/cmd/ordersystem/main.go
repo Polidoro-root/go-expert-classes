@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
+	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/configs"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/event/handler"
+	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/graph"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/web/webserver"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/pkg/events"
 	"github.com/streadway/amqp"
@@ -36,7 +39,8 @@ func main() {
 		RabbitMQChannel: rabbitMQChannel,
 	})
 
-	// createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
+	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
+	listOrdersUseCase := NewListOrdersUseCase(db, eventDispatcher)
 
 	webserver := webserver.NewWebServer(configs.WebServerPort)
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
@@ -53,8 +57,24 @@ func main() {
 
 	fmt.Println("Starting web server on port ", configs.WebServerPort)
 
-	webserver.Start()
+	go webserver.Start()
 
+	srv := graphql_handler.NewDefaultServer(
+		graph.NewExecutableSchema(
+			graph.Config{
+				Resolvers: &graph.Resolver{
+					CreateOrderUseCase: *createOrderUseCase,
+					ListOrdersUseCase:  *listOrdersUseCase,
+				},
+			},
+		),
+	)
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	fmt.Println("Starting GraphQL server on port ", configs.GraphQLServerPort)
+	http.ListenAndServe(":"+configs.GraphQLServerPort, nil)
 }
 
 func getRabbitMQChannel(url string) *amqp.Channel {

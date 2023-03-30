@@ -25,7 +25,6 @@ func NewListOrdersUseCase(
 ) *ListOrdersUseCase {
 	return &ListOrdersUseCase{
 		OrderRepository: OrderRepository,
-
 		EventDispatcher: EventDispatcher,
 	}
 }

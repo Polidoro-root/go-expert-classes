@@ -22,7 +22,7 @@ func NewOrderCreatedHandler(rabbitMQChannel *amqp.Channel) *OrderCreatedHandler 
 func (h *OrderCreatedHandler) Handle(event events.EventInterface, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	fmt.Printf("Order created: %v", event.GetPayload())
+	fmt.Printf("Order created: %v\n", event.GetPayload())
 
 	jsonOutput, _ := json.Marshal(event.GetPayload())
 
@@ -31,11 +31,15 @@ func (h *OrderCreatedHandler) Handle(event events.EventInterface, wg *sync.WaitG
 		Body:        jsonOutput,
 	}
 
-	h.RabbitMQChannel.Publish(
+	err := h.RabbitMQChannel.Publish(
 		"amq.direct",
 		"",
 		false,
 		false,
 		msgRabbitmq,
 	)
+
+	if err != nil {
+		fmt.Printf("Error on [OrderCreated] event: %s", err.Error())
+	}
 }

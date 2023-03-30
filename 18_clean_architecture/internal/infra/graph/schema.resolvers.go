@@ -6,19 +6,54 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/graph/model"
+	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/graph/model"
+	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/usecase"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// CreateOrder is the resolver for the createOrder field.
+func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderInput) (*model.Order, error) {
+	dto := usecase.OrderInputDTO{
+		ID:    input.ID,
+		Price: input.Price,
+		Tax:   input.Tax,
+	}
+
+	output, err := r.CreateOrderUseCase.Execute(dto)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Order{
+		ID:         output.ID,
+		Price:      float64(output.Price),
+		Tax:        float64(output.Tax),
+		FinalPrice: float64(output.FinalPrice),
+	}, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Orders is the resolver for the orders field.
+func (r *queryResolver) Orders(ctx context.Context) ([]*model.Order, error) {
+	output, err := r.ListOrdersUseCase.Execute()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var ordersModel []*model.Order
+
+	for _, order := range output {
+		ordersModel = append(ordersModel, &model.Order{
+			ID:         order.ID,
+			Price:      float64(order.Price),
+			Tax:        float64(order.Tax),
+			FinalPrice: float64(order.FinalPrice),
+		})
+
+	}
+
+	return ordersModel, nil
 }
 
 // Mutation returns MutationResolver implementation.

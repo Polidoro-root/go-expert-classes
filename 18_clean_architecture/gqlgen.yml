@@ -20,7 +20,7 @@ model:
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
-  dir: graph
+  dir: internal/infra/graph
   package: graph
 
 # Optional: turn on use ` + "`" + `gqlgen:"fieldName"` + "`" + ` tags in your models
@@ -50,6 +50,9 @@ autobind:
 # modelgen, the others will be allowed when binding to fields. Configure them to
 # your liking
 models:
+  Category:
+    model:
+      - github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/graph/model.Order
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID

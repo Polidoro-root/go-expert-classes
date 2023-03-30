@@ -1,7 +1,8 @@
 package graph
 
-// This file will not be regenerated automatically.
-//
-// It serves as dependency injection for your app, add any dependencies you require here.
+import "github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/usecase"
 
-type Resolver struct{}
+type Resolver struct {
+	CreateOrderUseCase usecase.CreateOrderUseCase
+	ListOrdersUseCase  usecase.ListOrdersUseCase
+}
