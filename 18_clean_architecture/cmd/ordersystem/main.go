@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/configs"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/event/handler"
@@ -40,7 +41,15 @@ func main() {
 	webserver := webserver.NewWebServer(configs.WebServerPort)
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
 
-	webserver.AddHandler("/order", webOrderHandler.Create)
+	webserver.AddHandler("/order", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			webOrderHandler.List(w, r)
+		} else if r.Method == http.MethodPost {
+			webOrderHandler.Create(w, r)
+		} else {
+			http.Error(w, "/order accept only GET and POST methods", http.StatusMethodNotAllowed)
+		}
+	})
 
 	fmt.Println("Starting web server on port ", configs.WebServerPort)
 
