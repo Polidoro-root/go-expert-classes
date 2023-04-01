@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"net"
 	"net/http"
 
 	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
@@ -10,9 +11,13 @@ import (
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/configs"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/event/handler"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/graph"
+	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/grpc/pb"
+	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/grpc/service"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/internal/infra/web/webserver"
 	"github.com/Polidoro-root/go-expert-classes/18_clean_architecture/pkg/events"
 	"github.com/streadway/amqp"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -58,6 +63,19 @@ func main() {
 	fmt.Println("Starting web server on port ", configs.WebServerPort)
 
 	go webserver.Start()
+
+	grpcServer := grpc.NewServer()
+	orderService := service.NewOrderService(*createOrderUseCase, *listOrdersUseCase)
+	pb.RegisterOrderServiceServer(grpcServer, orderService)
+	reflection.Register(grpcServer)
+
+	fmt.Println("Starting gRPC server on port ", configs.GRPCServerPort)
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", configs.GRPCServerPort))
+	if err != nil {
+		panic(err)
+	}
+
+	go grpcServer.Serve(lis)
 
 	srv := graphql_handler.NewDefaultServer(
 		graph.NewExecutableSchema(
