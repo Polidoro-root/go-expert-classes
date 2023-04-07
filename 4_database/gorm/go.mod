@@ -1,4 +1,4 @@
-module github.com/Polidoro-root/go-expert-classes/4_database/2
+module github.com/Polidoro-root/go-expert-classes/4_database/gorm
 
 go 1.20
 
